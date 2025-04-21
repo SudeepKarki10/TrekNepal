@@ -22,6 +22,7 @@ import {
   BookOpen,
   Award,
   MapPin,
+  FileText, // Import FileText icon
 } from "lucide-react-native";
 
 export default function ProfileScreen() {
@@ -223,6 +224,23 @@ export default function ProfileScreen() {
                 <MapPin size={20} color={colors.warning} />
               </View>
               <Text style={styles.activityText}>Visited Places</Text>
+            </TouchableOpacity>
+
+            {/* Add Permit History Button */}
+            <TouchableOpacity
+              style={styles.activityItem}
+              activeOpacity={0.8}
+              onPress={() => router.push("/profile/permit-history")} // Navigate to new screen
+            >
+              <View
+                style={[
+                  styles.activityIcon,
+                  { backgroundColor: `${colors.info}20` }, // Use info color
+                ]}
+              >
+                <FileText size={20} color={colors.info} />
+              </View>
+              <Text style={styles.activityText}>Permit History</Text>
             </TouchableOpacity>
           </View>
         </View>

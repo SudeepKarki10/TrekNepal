@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router"; // Import useRouter
 import { useTrekStore } from "@/store/trek-store";
 import { useAuthStore } from "@/store/auth-store";
 import { colors } from "@/constants/colors";
@@ -31,6 +31,7 @@ const { width } = Dimensions.get("window");
 
 export default function TrekDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter(); // Get router instance
   const { treks, toggleFavorite, isFavorite } = useTrekStore();
   const { user, isAuthenticated } = useAuthStore();
   const [activeTab, setActiveTab] = useState("overview");
@@ -211,6 +212,43 @@ export default function TrekDetailScreen() {
                 ))}
               </View>
             </View>
+
+            {/* TIMS Permit Button */}
+            {/* TIMS Permit Button with Auth Check */}
+            <TouchableOpacity
+              style={styles.timsButton}
+              onPress={() => {
+                if (isAuthenticated) {
+                  // User is logged in, proceed to apply form
+                  router.push({
+                    pathname: "/tims/apply",
+                    params: {
+                      trekId: trek.id,
+                      trekArea: trek.region, // Pass region as trekArea
+                      trekRoute: trek.name, // Pass name as trekRoute
+                    },
+                  });
+                } else {
+                  // User is not logged in, redirect to login
+                  Alert.alert(
+                    "Login Required",
+                    "Please log in to apply for a TIMS permit.",
+                    [
+                      { text: "Cancel", style: "cancel" },
+                      {
+                        text: "Login",
+                        onPress: () => router.push("/auth/login"),
+                      },
+                    ]
+                  );
+                }
+              }}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.timsButtonText}>
+                Issue TIMS Transit Pass Online
+              </Text>
+            </TouchableOpacity>
           </View>
         );
 
@@ -645,5 +683,19 @@ const styles = StyleSheet.create({
   gearText: {
     fontSize: 14,
     color: colors.text,
+  },
+  timsButton: {
+    backgroundColor: colors.primary,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 20, // Add some space above the button
+    marginBottom: 10,
+  },
+  timsButtonText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
